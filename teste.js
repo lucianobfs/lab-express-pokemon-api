@@ -1,60 +1,61 @@
-const express = require("express")
-const roteador = express.Router()
-const db = require("./data")
-
+const express = require("express");
+const roteador = express.Router();
+const db = require("./data");
 
 roteador.post("/create-pokemon", (req, res) => {
-    db.push({...req.body})
-    console.log(db)
-    return res.status(201).json({...db[db.length -1]})
-})
+  db.push({ ...req.body });
+  console.log(db);
+  return res.status(201).json({ ...db[db.length - 1] });
+});
 
 roteador.get("/get-pokemon", (req, res) => {
-    return res.status(200).json({...db})
-})
+  return res.status(200).json({ ...db });
+});
 
 roteador.patch("/edit-pokemon/:id", (req, res) => {
-    const indexToSubstitute = db.findIndex((item) => {
-        return item.id === req.params.id
-    })
+  const indexToSubstitute = db.findIndex((item) => {
+    return item.id === req.params.id;
+  });
 
-    console.log(indexToSubstitute)
+  console.log(indexToSubstitute);
 
-    db[indexToSubstitute] = {...db[indexToSubstitute], ...req.body}
+  db[indexToSubstitute] = { ...db[indexToSubstitute], ...req.body };
 
-    res.status(200).json({...db[indexToSubstitute]})
-})
+  res.status(200).json({ ...db[indexToSubstitute] });
+});
 
 roteador.delete("/delete-pokemon/:id", (req, res) => {
-    db.map((item, i) => {
-        if (item.id === req.params.id) {
-            return db.splice(i, 1)
-        }
-    })
+  db.map((item, i) => {
+    if (item.id === req.params.id) {
+      return db.splice(i, 1);
+    }
+  });
 
-    res.status(200).json({})
-})
+  res.status(200).json({});
+});
 
 roteador.get("/pokemon", (req, res) => {
-    if (req.query.search) {
-        const searchRes = db.filter((item) => {
-            for (let key in item) {
-                const includesRes = String(item[key]).toLocaleLowerCase().includes(req.query.search.toLocaleLowerCase())
+  if (req.query.search) {
+    const searchRes = db.filter((item) => {
+      for (let key in item) {
+        const includesRes = String(item[key])
+          .toLowerCase()
+          .includes(req.query.search.toLowerCase());
 
-                if (includesRes) {
-                    return includesRes
-                }
-            }
-        })
-
-        if (searchRes.length) {
-            return res.status(200).json(searchRes)
+        if (includesRes) {
+          return includesRes;
         }
+      }
+    });
 
-        return res.status(404).json({msg: "erro, nao encontrado o pokemon"})
+    if (searchRes.length) {
+      return res.status(200).json(searchRes);
     }
 
-    res.status(200).json(db)
-}) 
+    return res.status(404).json({ msg: "erro, nao encontrado o pokemon" });
+  }
 
-module.exports = roteador
+  res.status(200).json(db);
+});
+
+module.exports = roteador;
